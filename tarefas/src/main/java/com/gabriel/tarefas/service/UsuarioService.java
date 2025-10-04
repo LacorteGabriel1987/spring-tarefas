@@ -1,9 +1,9 @@
+package com.gabriel.usuario.service;
+
 import com.gabriel.tarefas.entity.Usuario;
 import com.gabriel.tarefas.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,45 +14,49 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
-
-    // Listar todos os usuários
+    // ===========================
+    // LISTAR TODOS OS USUÁRIOS
+    // ===========================
     public List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
     }
 
-    //Buscar por id
-    public Optional<Usuario> buscarId(Long id){
+    // ===========================
+    // BUSCAR USUÁRIO POR ID
+    // ===========================
+    public Optional<Usuario> buscarPorId(Long id) {
         return usuarioRepository.findById(id);
     }
 
-    //Salvar Usuario
-    public Usuario salvarUsuario(Usuario usuario){
+    // ===========================
+    // SALVAR NOVO USUÁRIO
+    // ===========================
+    public Usuario salvarUsuario(Usuario usuario) {
         return usuarioRepository.save(usuario);
     }
 
-
-    //Atualizar
-    public Usuario atualizarUsuario(Usuario usuario, Long id){
+    // ===========================
+    // ATUALIZAR USUÁRIO EXISTENTE
+    // ===========================
+    public Usuario atualizarUsuario(Usuario usuario, Long id) {
         return usuarioRepository.findById(id)
-                .map(Usuario ->{
-                    usuario.setEmail(atualizarUsuario().getEmail());
-                    usuario.setNome(atualizarUsuario().getNome())
-                            return usuarioRepository.save(usuario);
+                .map(usuarioExistente -> {
+                    usuarioExistente.setNome(usuario.getNome());
+                    usuarioExistente.setEmail(usuario.getEmail());
+                    // Adicione outros campos caso a entidade Usuario tenha
+                    return usuarioRepository.save(usuarioExistente);
                 })
-                .orElseThrow(()-> new RuntimeException("Usuario não encontrado"));
-
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID " + id));
     }
 
-    //Deleta
-    public void deletarUsuario(Long id){
-        if(usuarioRepository.existsById(id)){
-            usuarioRepository.deleteById(id);
-        }else
-            throw new RuntimeException("Usuario não encontrado com ID" + id);
+    // ===========================
+    // DELETAR USUÁRIO POR ID
+    // ===========================
+    public void deletarUsuario(Long id) {
+        if(!usuarioRepository.existsById(id)) {
+            throw new RuntimeException("Usuário não encontrado com ID " + id);
+        }
+        usuarioRepository.deleteById(id);
     }
-//    //Ou desta forma DELETAR
-//    public void deletarUsuario(Long id) {
-//        usuarioRepository.deleteById(id);
-//    }
 
 }
