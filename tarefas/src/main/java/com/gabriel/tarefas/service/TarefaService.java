@@ -22,6 +22,7 @@ public class TarefaService {
     public List<Tarefa> buscarTarefas(){
         return tarefaRepository.findAll();
     }
+
     //Buscar por ID
     public Optional<Tarefa> buscarPorId(Long id){
         return tarefaRepository.findById(id);
